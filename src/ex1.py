@@ -13,7 +13,7 @@ class Ex1:
 
         ut.append(g2_in(t))
 
-        for y in range(0, M_in):
+        for y in range(0, int(M_in)):
             ut_next = ut
             for x in range(1,N_in):
                 ut_next[x] = delta_t*((ut[x-1]-2*ut[x]+ut[x+1])*pow(N_in,2) + f(x,t))
@@ -22,5 +22,6 @@ class Ex1:
             t=t+delta_t
             ut[0] = g1_in(t)
             ut[N_in] = g2_in(t)
-            print(ut)
+
+        print(ut)
             

@@ -12,14 +12,13 @@ def main():
     print("\nN:")
     N_in = int(input())
 
-    print("\nM:")
-    M_in = int(input())
-
     print("\nlambda:")
     lambda_in = float(input())
 
+    M = pow(N_in,2)/lambda_in
+
     ex1 = Ex1()
-    ex1.resolver(u0,f,N_in,M_in,lambda_in,g1,g2)
+    ex1.resolver(u0,f,N_in,M,lambda_in,g1,g2)
 
 if __name__ == "__main__":
     main()

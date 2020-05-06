@@ -6,6 +6,7 @@ class Ex2:
 
 
     #TODO: segundo o roteiro é para ser usado N-1, mas não penso que faça sentido. Conferir quando possível
+    #Os métodos implementados foram feitos para a resolução específica do exercício, não sendo válidos para caso geral.
     def resolver_euler(self, u0_in, f_in, g1_in, g2_in, N_in):
         
         delta_t = delta_x = 1/N_in
@@ -20,7 +21,8 @@ class Ex2:
         ut.append(g2_in(0))
 
 
-        for t in range(0, 1, delta_t):
+        for i in range(0, N_in):
+            t=delta_t*i
             ut[0] = ut[0] + lambda_calc*g1_in(t+delta_t)
             ut[N_in-1] = ut[N_in-1] + lambda_calc*g2_in(t+delta_t)
 
@@ -29,30 +31,31 @@ class Ex2:
             
             temp = self.substituicao_direta(a_sub_diagonal, ut)
             temp = self.resolver_diagonal(a_diagonal, temp)
+            ut = self.substituicao_inversa(a_sub_diagonal, temp)
 
-
-        return None
+        return ut
 
 
     #https://themadcreator.github.io/luqr/
-    #Ax=B, usado para a função L
+    #usado para a função Ly=b
     def substituicao_direta(self, sub_diagonal, b):
         
-        if(len(sub_diagonal-1) != len(b)):
-            raise ValueError('Dimensoes impossiveis de serem resolvidas') 
+        if(len(sub_diagonal) != len(b)-1):
+            raise ValueError('Dimensoes impossiveis de serem resolvidas:'+str(len(sub_diagonal))+','+str(len(b))) 
         
         resolvido = [b[0]]
 
         for i in range(1,len(b)):
-            resolvido.append(b[i]-sub_diagonal[i-1])
+            resolvido.append(b[i]-sub_diagonal[i-1]*resolvido[i-1])
 
 
         return resolvido
 
+    #usado para a função Dz =y
     def resolver_diagonal(self, diagonal, y):
 
         if(len(diagonal) != len(y)):
-            raise ValueError('Dimensoes impossiveis de serem resolvidas') 
+            raise ValueError('Dimensoes impossiveis de serem resolvidas:'+str(len(diagonal))+','+str(len(y))) 
 
         resolvido = []
         for i in range(len(diagonal)):
@@ -60,10 +63,23 @@ class Ex2:
 
         return resolvido
 
+    #usado para a função (L^t)x=z
+    def substituicao_inversa(self, sub_diagonal, z):
+        
+        if(len(sub_diagonal) != len(z)-1):
+            raise ValueError('Dimensoes impossiveis de serem resolvidas:'+str(len(sub_diagonal))+','+str(len(z))) 
+        
+        resolvido = [z[len(z)-1]]
 
+        for i in range(2, len(z)+1):
+            resolvido.append(z[len(z)-i] - resolvido[i-2]*sub_diagonal[len(sub_diagonal)-i-1])
 
+        resolvido.reverse()
+
+        return resolvido
+ 
     def gerar_matriz(self, N_in, lambda_in):
-        A = np.identity(N_in -1)
+        A = np.identity(N_in)
         for i in range(0,len(A)):
             A[i][i] = 1+2*lambda_in
 
@@ -88,7 +104,7 @@ class Ex2:
         for i in range(0,len(A_in)):
             diagonal.append(A_in[i][i])
 
-        self.conferir_LDL(diagonal, sub_diagonal)
+        #self.conferir_LDL(diagonal, sub_diagonal)
 
         return diagonal, sub_diagonal
 

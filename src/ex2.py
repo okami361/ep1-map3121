@@ -12,7 +12,7 @@ class Ex2:
         delta_t = delta_x = 1/N_in
         lambda_calc = 1/delta_x
         
-        a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz(N_in, lambda_calc))
+        a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_euler(N_in, lambda_calc))
 
         ut = []
         ut.append(g1_in(0))
@@ -28,6 +28,39 @@ class Ex2:
 
             for x in range(0,N_in):
                 ut[x] = ut[x] + delta_t*f_in(t+delta_t,x*delta_x)
+            
+            temp = self.substituicao_direta(a_sub_diagonal, ut)
+            temp = self.resolver_diagonal(a_diagonal, temp)
+            ut = self.substituicao_inversa(a_sub_diagonal, temp)
+
+        return ut
+
+    def resolver_crank_nicolson(self, u0_in, f_in, g1_in, g2_in, N_in):
+        
+        delta_t = delta_x = 1/N_in
+        lambda_calc = 1/delta_x
+        
+        a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_crank_nicolson(N_in, lambda_calc))
+
+        ut = []
+        ut.append(g1_in(0))
+        for xi in range(1,N_in-1):
+            ut.append(u0_in(xi*delta_x))
+        ut.append(g2_in(0))
+
+
+        for i in range(0, N_in):
+            t=delta_t*i
+            ut[0] = ut[0] + lambda_calc*g1_in(t+delta_t)
+            ut[N_in-1] = ut[N_in-1] + lambda_calc*g2_in(t+delta_t)
+
+            ut_aux = [None]*N_in
+            ut_aux[0] = ut[0]+(lambda_calc/2)*(-2*ut[0]+ut[1]) + (delta_t/2)*(f_in(t,0) + f_in(t+delta_t,0)) + (lambda_calc/2)*(g1_in(t)+g1_in(t+delta_t))
+            ut_aux[N_in-1] = ut[N_in-1]+(lambda_calc/2)*(ut[N_in-2]-2*ut[N_in-1]) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x) + f_in(t+delta_t,(N_in-1)*delta_x)) + (lambda_calc/2)*(g2_in(t)+g2_in(t+delta_t))
+            for x in range(1,N_in-1):
+                ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,x*delta_x) + f_in(t+delta_t,x*delta_x))
+
+            ut=ut_aux.copy()
             
             temp = self.substituicao_direta(a_sub_diagonal, ut)
             temp = self.resolver_diagonal(a_diagonal, temp)
@@ -78,7 +111,7 @@ class Ex2:
 
         return resolvido
  
-    def gerar_matriz(self, N_in, lambda_in):
+    def gerar_matriz_euler(self, N_in, lambda_in):
         A = np.identity(N_in)
         for i in range(0,len(A)):
             A[i][i] = 1+2*lambda_in
@@ -86,6 +119,17 @@ class Ex2:
         for i in range(0,len(A)-1):
             A[i+1][i] = -lambda_in
             A[i][i+1] = -lambda_in
+        
+        return A
+
+    def gerar_matriz_crank_nicolson(self, N_in, lambda_in):
+        A = np.identity(N_in)
+        for i in range(0,len(A)):
+            A[i][i] = 1+lambda_in
+
+        for i in range(0,len(A)-1):
+            A[i+1][i] = -lambda_in/2
+            A[i][i+1] = -lambda_in/2
         
         return A
 

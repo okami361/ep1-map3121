@@ -69,7 +69,7 @@ def main():
     N_in = int(input())
 
     x = np.linspace(0,1,N_in)
-    y_estimado = ex2.resolver_euler(u0,f,g1,g2,N_in)
+    y_estimado = ex2.resolver_crank_nicolson(u0,f,g1,g2,N_in)
     plt.plot(x,y_estimado, color='#0000FF', label = 'estimado') # cor azul
 
     y_exato = []

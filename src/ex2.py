@@ -1,6 +1,5 @@
 import numpy as np
 
-#https://www.youtube.com/watch?v=1Fl4PjbD2Y8
 
 class Ex2:
 
@@ -51,12 +50,10 @@ class Ex2:
 
         for i in range(0, N_in):
             t=delta_t*i
-            ut[0] = ut[0] + lambda_calc*g1_in(t+delta_t)
-            ut[N_in-1] = ut[N_in-1] + lambda_calc*g2_in(t+delta_t)
 
             ut_aux = [None]*N_in
-            ut_aux[0] = ut[0]+(lambda_calc/2)*(-2*ut[0]+ut[1]) + (delta_t/2)*(f_in(t,0) + f_in(t+delta_t,0)) + (lambda_calc/2)*(g1_in(t)+g1_in(t+delta_t))
-            ut_aux[N_in-1] = ut[N_in-1]+(lambda_calc/2)*(ut[N_in-2]-2*ut[N_in-1]) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x) + f_in(t+delta_t,(N_in-1)*delta_x)) + (lambda_calc/2)*(g2_in(t)+g2_in(t+delta_t))
+            ut_aux[0] = ut[0]+(lambda_calc/2)*(-ut[0]+ut[1]) + (delta_t/2)*(f_in(t,0) + f_in(t+delta_t,0)) + (lambda_calc/2)*(g1_in(t)+g1_in(t+delta_t))
+            ut_aux[N_in-1] = ut[N_in-1]+(lambda_calc/2)*(ut[N_in-2]-ut[N_in-1]) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x) + f_in(t+delta_t,(N_in-1)*delta_x)) + (lambda_calc/2)*(g2_in(t)+g2_in(t+delta_t))
             for x in range(1,N_in-1):
                 ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,x*delta_x) + f_in(t+delta_t,x*delta_x))
 
@@ -132,7 +129,8 @@ class Ex2:
             A[i][i+1] = -lambda_in/2
         
         return A
-
+        
+    #https://www.youtube.com/watch?v=1Fl4PjbD2Y8
     def calc_decomp(self,A_in):
         diagonal = []
         sub_diagonal = []

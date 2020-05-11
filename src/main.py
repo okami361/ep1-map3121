@@ -9,21 +9,21 @@ def main():
 
     #Ex1
     #a
-    # f = lambda t,x : 10*x*x*(x-1) - 60*x*t + 20*t
-    # u0 = lambda x : 0
-    # g1 = lambda t : 0
-    # g2 = lambda t : 0
-
-    # f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)
-
-    # a'
-    f = lambda t,x : 10*math.cos(10*t)*pow(x,2)*pow(1-x,2) - (1+math.sin(10*t))*(12*pow(x,2) - 12*x +2)
-    u0 = lambda x : pow(x,2)*pow(1-x,2)
+    f = lambda t,x : 10*x*x*(x-1) - 60*x*t + 20*t
+    u0 = lambda x : 0
     g1 = lambda t : 0
     g2 = lambda t : 0
 
+    f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)
 
-    f_exato = lambda t,x : (1+math.sin(10*t))*pow(x,2)*pow(1-x,2)
+    # a'
+    # f = lambda t,x : 10*math.cos(10*t)*pow(x,2)*pow(1-x,2) - (1+math.sin(10*t))*(12*pow(x,2) - 12*x +2)
+    # u0 = lambda x : pow(x,2)*pow(1-x,2)
+    # g1 = lambda t : 0
+    # g2 = lambda t : 0
+
+
+    # f_exato = lambda t,x : (1+math.sin(10*t))*pow(x,2)*pow(1-x,2)
 
     # print("\nN:")
     # N_in = int(input())
@@ -68,8 +68,8 @@ def main():
     print("\nN:")
     N_in = int(input())
 
-    x = np.linspace(0,1,N_in)
-    y_estimado = ex2.resolver_crank_nicolson(u0,f,g1,g2,N_in)
+    x = np.linspace(0,1,N_in+1)
+    y_estimado = ex2.resolver_euler(u0,f,g1,g2,N_in)
     plt.plot(x,y_estimado, color='#0000FF', label = 'estimado') # cor azul
 
     y_exato = []

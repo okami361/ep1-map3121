@@ -4,7 +4,6 @@ import numpy as np
 class Ex2:
 
 
-    #TODO: segundo o roteiro é para ser usado N-1, mas não penso que faça sentido. Conferir quando possível
     #Os métodos implementados foram feitos para a resolução específica do exercício, não sendo válidos para caso geral.
     def resolver_euler(self, u0_in, f_in, g1_in, g2_in, N_in):
         
@@ -14,25 +13,30 @@ class Ex2:
         a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_euler(N_in, lambda_calc))
 
         ut = []
-        ut.append(g1_in(0))
-        for xi in range(1,N_in-1):
+        for xi in range(1,N_in):
             ut.append(u0_in(xi*delta_x))
-        ut.append(g2_in(0))
 
 
         for i in range(0, N_in):
             t=delta_t*i
-            ut[0] = ut[0] + lambda_calc*g1_in(t+delta_t)
-            ut[N_in-1] = ut[N_in-1] + lambda_calc*g2_in(t+delta_t)
 
-            for x in range(0,N_in):
-                ut[x] = ut[x] + delta_t*f_in(t+delta_t,x*delta_x)
+            ut[0] = ut[0]+lambda_calc*g1_in(t+delta_t)
+            ut[N_in-2] = ut[N_in-2]+lambda_calc*g2_in(t+delta_t)
+
+            for x in range(0,N_in-1):
+                ut[x] = ut[x] + delta_t*f_in(t+delta_t,(x+1)*delta_x)
             
             temp = self.substituicao_direta(a_sub_diagonal, ut)
             temp = self.resolver_diagonal(a_diagonal, temp)
             ut = self.substituicao_inversa(a_sub_diagonal, temp)
 
-        return ut
+        ut_final = []
+        ut_final.append(g1_in(1))
+        for x in range(0,N_in-1):
+            ut_final.append(ut[x])
+        ut_final.append(g2_in(1))
+
+        return ut_final
 
     def resolver_crank_nicolson(self, u0_in, f_in, g1_in, g2_in, N_in):
         
@@ -42,20 +46,19 @@ class Ex2:
         a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_crank_nicolson(N_in, lambda_calc))
 
         ut = []
-        ut.append(g1_in(0))
-        for xi in range(1,N_in-1):
+        for xi in range(1,N_in):
             ut.append(u0_in(xi*delta_x))
-        ut.append(g2_in(0))
 
 
         for i in range(0, N_in):
             t=delta_t*i
 
-            ut_aux = [None]*N_in
-            ut_aux[0] = ut[0]+(lambda_calc/2)*(-ut[0]+ut[1]) + (delta_t/2)*(f_in(t,0) + f_in(t+delta_t,0)) + (lambda_calc/2)*(g1_in(t)+g1_in(t+delta_t))
-            ut_aux[N_in-1] = ut[N_in-1]+(lambda_calc/2)*(ut[N_in-2]-ut[N_in-1]) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x) + f_in(t+delta_t,(N_in-1)*delta_x)) + (lambda_calc/2)*(g2_in(t)+g2_in(t+delta_t))
-            for x in range(1,N_in-1):
-                ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,x*delta_x) + f_in(t+delta_t,x*delta_x))
+            ut_aux = [None]*(N_in-1)
+
+            ut_aux[0] = ut[0]+(lambda_calc/2)*(g1_in(t)-2*ut[0]+ut[1]) + (delta_t/2)*(f_in(t,delta_x) + f_in(t+delta_t,delta_x)) + (lambda_calc/2)*g1_in(t+delta_t)
+            ut_aux[N_in-2] = ut[N_in-2]+(lambda_calc/2)*(ut[N_in-3]-2*ut[N_in-2]+g2_in(t)) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x) + f_in(t+delta_t,(N_in-1)*delta_x)) + (lambda_calc/2)*(g2_in(t+delta_t))
+            for x in range(1,N_in-2):
+                ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,(x+1)*delta_x) + f_in(t+delta_t,(x+1)*delta_x))
 
             ut=ut_aux.copy()
             
@@ -63,7 +66,13 @@ class Ex2:
             temp = self.resolver_diagonal(a_diagonal, temp)
             ut = self.substituicao_inversa(a_sub_diagonal, temp)
 
-        return ut
+        ut_final = []
+        ut_final.append(g1_in(1))
+        for x in range(0,N_in-1):
+            ut_final.append(ut[x])
+        ut_final.append(g2_in(1))
+
+        return ut_final
 
 
     #https://themadcreator.github.io/luqr/
@@ -109,7 +118,7 @@ class Ex2:
         return resolvido
  
     def gerar_matriz_euler(self, N_in, lambda_in):
-        A = np.identity(N_in)
+        A = np.identity(N_in-1)
         for i in range(0,len(A)):
             A[i][i] = 1+2*lambda_in
 
@@ -120,7 +129,7 @@ class Ex2:
         return A
 
     def gerar_matriz_crank_nicolson(self, N_in, lambda_in):
-        A = np.identity(N_in)
+        A = np.identity(N_in-1)
         for i in range(0,len(A)):
             A[i][i] = 1+lambda_in
 

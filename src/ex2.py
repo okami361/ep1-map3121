@@ -25,10 +25,11 @@ class Ex2:
 
             for x in range(0,N_in-1):
                 ut[x] = ut[x] + delta_t*f_in(t+delta_t,(x+1)*delta_x)
+
             
             temp = self.substituicao_direta(a_sub_diagonal, ut)
             temp = self.resolver_diagonal(a_diagonal, temp)
-            ut = self.substituicao_inversa(a_sub_diagonal, temp)
+            ut = self.substituicao_inversa(a_sub_diagonal, temp).copy()
 
         ut_final = []
         ut_final.append(g1_in(1))
@@ -110,8 +111,8 @@ class Ex2:
         
         resolvido = [z[len(z)-1]]
 
-        for i in range(2, len(z)+1):
-            resolvido.append(z[len(z)-i] - resolvido[i-2]*sub_diagonal[len(sub_diagonal)-i-1])
+        for i in range(len(z)-2,-1,-1):
+            resolvido.append(z[i]-sub_diagonal[i]*resolvido[len(resolvido)-1])
 
         resolvido.reverse()
 

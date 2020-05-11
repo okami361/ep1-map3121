@@ -8,22 +8,22 @@ from ex2 import Ex2
 def main():
 
     #Ex1
-    #a
-    f = lambda t,x : 10*x*x*(x-1) - 60*x*t + 20*t
-    u0 = lambda x : 0
-    g1 = lambda t : 0
-    g2 = lambda t : 0
-
-    f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)
-
-    # a'
-    # f = lambda t,x : 10*math.cos(10*t)*pow(x,2)*pow(1-x,2) - (1+math.sin(10*t))*(12*pow(x,2) - 12*x +2)
-    # u0 = lambda x : pow(x,2)*pow(1-x,2)
+    # # a
+    # f = lambda t,x : 10*x*x*(x-1) - 60*x*t + 20*t
+    # u0 = lambda x : 0
     # g1 = lambda t : 0
     # g2 = lambda t : 0
 
+    # f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)
 
-    # f_exato = lambda t,x : (1+math.sin(10*t))*pow(x,2)*pow(1-x,2)
+    # a'
+    f = lambda t,x : 10*math.cos(10*t)*pow(x,2)*pow(1-x,2) - (1+math.sin(10*t))*(12*pow(x,2) - 12*x +2)
+    u0 = lambda x : pow(x,2)*pow(1-x,2)
+    g1 = lambda t : 0
+    g2 = lambda t : 0
+
+
+    f_exato = lambda t,x : (1+math.sin(10*t))*pow(x,2)*pow(1-x,2)
 
     # print("\nN:")
     # N_in = int(input())
@@ -79,6 +79,9 @@ def main():
     plt.plot(x,y_exato,color='#808080', label = 'exato')  # cor cinza
 
     plt.legend(loc='best')
+    plt.title('Distribuição do Calor em t=1 N='+str(N_in))
+    plt.xlabel('x: Comprimento da Barra')
+    plt.ylabel('u(1,x)')
     plt.show()
 
 if __name__ == "__main__":

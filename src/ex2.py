@@ -1,5 +1,5 @@
 import numpy as np
-
+from plot_data import PlotData
 
 class Ex2:
 
@@ -16,9 +16,21 @@ class Ex2:
         for xi in range(1,N_in):
             ut.append(u0_in(xi*delta_x))
 
+        contador_adicionar_novo_plot = 0
+        PlotDatas = []
 
         for i in range(0, N_in):
             t=delta_t*i
+
+            if contador_adicionar_novo_plot<=t:
+                ut_aux = []
+                ut_aux.append(g1_in(t))
+                for x in range(0,N_in-1):
+                    ut_aux.append(ut[x])
+                ut_aux.append(g2_in(t))
+
+                PlotDatas.append(PlotData(contador_adicionar_novo_plot, ut_aux.copy()))
+                contador_adicionar_novo_plot = contador_adicionar_novo_plot + 0.1
 
             ut[0] = ut[0]+lambda_calc*g1_in(t+delta_t)
             ut[N_in-2] = ut[N_in-2]+lambda_calc*g2_in(t+delta_t)
@@ -37,7 +49,7 @@ class Ex2:
             ut_final.append(ut[x])
         ut_final.append(g2_in(1))
 
-        return ut_final
+        return PlotDatas, ut_final
 
     def resolver_crank_nicolson(self, u0_in, f_in, g1_in, g2_in, N_in):
         
@@ -140,7 +152,7 @@ class Ex2:
         
         return A
         
-    #https://www.youtube.com/watch?v=1Fl4PjbD2Y8
+
     def calc_decomp(self,A_in):
         diagonal = []
         sub_diagonal = []

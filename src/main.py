@@ -42,8 +42,11 @@ def main():
 
     for N_atual in Ns:
         plt.clf()
+        plt.figure(figsize=(10,4))
 
         x = np.linspace(0,1,N_atual+1)
+
+        plt.subplot2grid((1,2), (0,0))
         PlotDatas, ut_final = ex2.resolver_euler(u0,f,g1,g2,N_atual)
         colors = cm.rainbow(np.linspace(0, 1, len(PlotDatas)))
 
@@ -53,10 +56,25 @@ def main():
         plt.plot(x,ut_final, color='#000000', label = 'Tempo=1')
 
         plt.legend(loc='best')
-        plt.title('Distribuição do Calor N='+str(N_atual))
+        plt.title('Distribuição de Calor N='+str(N_atual))
         plt.xlabel('x: Comprimento da Barra')
         plt.ylabel('u(t,x)')
-        plt.savefig('Euler\euler_rainbow_n_'+str(N_atual))
+
+        plt.subplot2grid((1,2), (0,1))
+
+        y_exato = []
+        for xi in x:
+            y_exato.append(f_exato(1, xi))
+
+        plt.plot(x,ut_final, color='#808080', label = 'Função Exata')
+        plt.plot(x,y_exato, color='#0000FF', label = 'Função Estimada')
+
+        plt.legend(loc='best')
+        plt.title('Distribuição de Calor N='+str(N_atual))
+        plt.xlabel('x: Comprimento da Barra')
+        plt.ylabel('u(t,x)')
+
+        plt.savefig('images\euler_n_'+str(N_atual))
 
         plt.clf()
 

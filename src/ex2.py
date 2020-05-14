@@ -62,9 +62,22 @@ class Ex2:
         for xi in range(1,N_in):
             ut.append(u0_in(xi*delta_x))
 
+        contador_adicionar_novo_plot = 0
+        PlotDatas = []
+
 
         for i in range(0, N_in):
             t=delta_t*i
+
+            if contador_adicionar_novo_plot<=t:
+                ut_sub = []
+                ut_sub.append(g1_in(t))
+                for x in range(0,N_in-1):
+                    ut_sub.append(ut[x])
+                ut_sub.append(g2_in(t))
+
+                PlotDatas.append(PlotData(contador_adicionar_novo_plot, ut_sub.copy()))
+                contador_adicionar_novo_plot = contador_adicionar_novo_plot + 0.1
 
             ut_aux = [None]*(N_in-1)
 
@@ -85,7 +98,7 @@ class Ex2:
             ut_final.append(ut[x])
         ut_final.append(g2_in(1))
 
-        return ut_final
+        return PlotDatas,ut_final
 
 
     #https://themadcreator.github.io/luqr/

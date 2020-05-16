@@ -13,33 +13,33 @@ def main():
 
     exercicios = []
 
-    exercicios.append(ExercicioData('a',
-        lambda t,x,dx : 10*x*x*(x-1) - 60*x*t + 20*t,
-        lambda x : 0,
-        lambda t : 0,
-        lambda t : 0,
-        f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)))
+    # exercicios.append(ExercicioData('a',
+    #     lambda t,x,dx : 10*x*x*(x-1) - 60*x*t + 20*t,
+    #     lambda x : 0,
+    #     lambda t : 0,
+    #     lambda t : 0,
+    #     f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)))
 
-    exercicios.append(ExercicioData('a_linha',
-        lambda t,x,dx : 10*math.cos(10*t)*(x**2)*((1-x)**2) - (1+math.sin(10*t))*(12*x**2 - 12*x +2),
-        lambda x : (x**2)*((1-x)**2),
-        lambda t : 0,
-        lambda t : 0,
-        lambda t,x : (1+math.sin(10*t))*(x**2)*((1-x)**2)))
+    # exercicios.append(ExercicioData('a_linha',
+    #     lambda t,x,dx : 10*math.cos(10*t)*(x**2)*((1-x)**2) - (1+math.sin(10*t))*(12*x**2 - 12*x +2),
+    #     lambda x : (x**2)*((1-x)**2),
+    #     lambda t : 0,
+    #     lambda t : 0,
+    #     lambda t,x : (1+math.sin(10*t))*(x**2)*((1-x)**2)))
 
     exercicios.append(ExercicioData('b',
-        lambda t,x,dx : math.exp(t-x)*math.cos(5*t*x)-(-25*math.exp(t-x)*(t**2)*math.cos(5*t*x)+10*math.exp(t-x)*t*math.sin(5*t*x)),
+        lambda t,x,dx : math.exp(t-x)*(math.cos(5*t*x)-5*x*math.sin(5*t*x))-math.exp(t-x)*(math.cos(5*t*x)*(1-25*(t**2))+10*t*math.sin(5*t*x)),
         lambda x : math.exp(-x),
         lambda t :math.exp(t),
         lambda t : math.exp(t-1)*math.cos(5*t),
         lambda t,x : math.exp(t-x)*math.cos(5*t*x)))
 
-    exercicios.append(ExercicioData('c',
-        lambda t,x,dx :  0 if x > (0.25+(dx/2)) else (0 if (x <0.25-(dx/2)) else ((10000*(1-(2*(t**2))))/dx)),
-        lambda x : 0,
-        lambda t : 0,
-        lambda t : 0,
-        None))
+    # exercicios.append(ExercicioData('c',
+    #     lambda t,x,dx :  0 if x > (0.25+(dx/2)) else (0 if (x <0.25-(dx/2)) else ((10000*(1-(2*(t**2))))/dx)),
+    #     lambda x : 0,
+    #     lambda t : 0,
+    #     lambda t : 0,
+    #     None))
 
     Ns = [10, 20, 40, 80, 160, 320]
 

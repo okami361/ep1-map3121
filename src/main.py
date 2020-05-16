@@ -46,8 +46,10 @@ def main():
     ex2 = Ex2()
 
     for exercicio_atual in exercicios:
+        print('\n---------------------------------------------------------------------------------------')
+        print('Exercicio:'+exercicio_atual.nome)
         for N_atual in Ns:
-
+            print('\nN:'+str(N_atual))
             x = np.linspace(0, 1, N_atual+1)
 
             PlotDatas_euler, y_estimado_euler = ex2.resolver_euler(exercicio_atual.u0, exercicio_atual.f, exercicio_atual.g1, exercicio_atual.g2, N_atual)
@@ -64,14 +66,13 @@ def main():
             plot(y_exato, y_estimado_crank, PlotDatas_crank, N_atual, 'Crank_'+exercicio_atual.nome+'_'+str(N_atual))
 
             if not exercicio_atual.f_exato is None:
-                print('\nEuler:')
+                print('Euler:')
                 calc_erro(y_exato,y_estimado_euler, N_atual)
-                print('\nCrank:')
+                print('Crank:')
                 calc_erro(y_exato,y_estimado_crank, N_atual)
 
 
 def plot(y_exato, y_estimado, PlotDatas, N, nome):
-
     plt.figure(figsize=(10, 4))
 
     x = np.linspace(0, 1, N+1)
@@ -116,8 +117,7 @@ def calc_erro(y_exato,y_estimado, N):
             erro = e
             erro_percentual = 100*abs((y_exato[i]-y_estimado[i])/y_exato[i])
 
-    print('\n\nN:'+str(N))
-    print("\nErro Máximo: ", erro)
+    print("Erro Máximo: ", erro)
 
 if __name__ == "__main__":
     main()

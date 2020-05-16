@@ -8,7 +8,7 @@ class Ex2:
     def resolver_euler(self, u0_in, f_in, g1_in, g2_in, N_in):
         
         delta_t = delta_x = 1/N_in
-        lambda_calc = 1/delta_x
+        lambda_calc = N_in
         
         a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_euler(N_in, lambda_calc))
 
@@ -36,11 +36,11 @@ class Ex2:
             ut[N_in-2] = ut[N_in-2]+lambda_calc*g2_in(t+delta_t)
 
             for x in range(0,N_in-1):
-                ut[x] = ut[x] + delta_t*f_in(t+delta_t,(x+1)*delta_x)
+                ut[x] = ut[x] + delta_t*f_in(t+delta_t,(x+1)*delta_x,delta_x)
 
             
             temp = self.substituicao_direta(a_sub_diagonal, ut)
-            temp = self.resolver_diagonal(a_diagonal, temp)
+            temp = self.resolver_diagonal(a_diagonal, temp.copy())
             ut = self.substituicao_inversa(a_sub_diagonal, temp).copy()
 
         ut_final = []
@@ -81,10 +81,10 @@ class Ex2:
 
             ut_aux = [None]*(N_in-1)
 
-            ut_aux[0] = ut[0]+(lambda_calc/2)*(g1_in(t)-2*ut[0]+ut[1]) + (delta_t/2)*(f_in(t,delta_x) + f_in(t+delta_t,delta_x)) + (lambda_calc/2)*g1_in(t+delta_t)
-            ut_aux[N_in-2] = ut[N_in-2]+(lambda_calc/2)*(ut[N_in-3]-2*ut[N_in-2]+g2_in(t)) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x) + f_in(t+delta_t,(N_in-1)*delta_x)) + (lambda_calc/2)*(g2_in(t+delta_t))
+            ut_aux[0] = ut[0]+(lambda_calc/2)*(g1_in(t)-2*ut[0]+ut[1]) + (delta_t/2)*(f_in(t,delta_x, delta_x) + f_in(t+delta_t,delta_x,delta_x)) + (lambda_calc/2)*g1_in(t+delta_t)
+            ut_aux[N_in-2] = ut[N_in-2]+(lambda_calc/2)*(ut[N_in-3]-2*ut[N_in-2]+g2_in(t)) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x,delta_x) + f_in(t+delta_t,(N_in-1)*delta_x,delta_x)) + (lambda_calc/2)*(g2_in(t+delta_t))
             for x in range(1,N_in-2):
-                ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,(x+1)*delta_x) + f_in(t+delta_t,(x+1)*delta_x))
+                ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,(x+1)*delta_x,delta_x) + f_in(t+delta_t,(x+1)*delta_x,delta_x))
 
             ut=ut_aux.copy()
             

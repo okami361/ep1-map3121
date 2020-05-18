@@ -13,19 +13,19 @@ def main():
 
     exercicios = []
 
-    # exercicios.append(ExercicioData('a',
-    #     lambda t,x,dx : 10*x*x*(x-1) - 60*x*t + 20*t,
-    #     lambda x : 0,
-    #     lambda t : 0,
-    #     lambda t : 0,
-    #     f_exato = lambda t,x : 10*t*pow(x,2)*(x-1)))
+    exercicios.append(ExercicioData('a',
+        lambda t,x,dx : 10*x*x*(x-1) - 60*x*t + 20*t, #f
+        lambda x : 0, #g0
+        lambda t : 0, #g1
+        lambda t : 0, #g2
+        lambda t,x : 10*t*pow(x,2)*(x-1))) #u exato
 
-    # exercicios.append(ExercicioData('a_linha',
-    #     lambda t,x,dx : 10*math.cos(10*t)*(x**2)*((1-x)**2) - (1+math.sin(10*t))*(12*x**2 - 12*x +2),
-    #     lambda x : (x**2)*((1-x)**2),
-    #     lambda t : 0,
-    #     lambda t : 0,
-    #     lambda t,x : (1+math.sin(10*t))*(x**2)*((1-x)**2)))
+    exercicios.append(ExercicioData('a_linha',
+        lambda t,x,dx : 10*math.cos(10*t)*(x**2)*((1-x)**2) - (1+math.sin(10*t))*(12*x**2 - 12*x +2),
+        lambda x : (x**2)*((1-x)**2),
+        lambda t : 0,
+        lambda t : 0,
+        lambda t,x : (1+math.sin(10*t))*(x**2)*((1-x)**2)))
 
     exercicios.append(ExercicioData('b',
         lambda t,x,dx : math.exp(t-x)*(math.cos(5*t*x)-5*x*math.sin(5*t*x))-math.exp(t-x)*(math.cos(5*t*x)*(1-25*(t**2))+10*t*math.sin(5*t*x)),
@@ -34,12 +34,12 @@ def main():
         lambda t : math.exp(t-1)*math.cos(5*t),
         lambda t,x : math.exp(t-x)*math.cos(5*t*x)))
 
-    # exercicios.append(ExercicioData('c',
-    #     lambda t,x,dx :  0 if x > (0.25+(dx/2)) else (0 if (x <0.25-(dx/2)) else ((10000*(1-(2*(t**2))))/dx)),
-    #     lambda x : 0,
-    #     lambda t : 0,
-    #     lambda t : 0,
-    #     None))
+    exercicios.append(ExercicioData('c',
+        lambda t,x,dx :  0 if x > (0.25+(dx/2)) else (0 if (x <0.25-(dx/2)) else ((10000*(1-(2*(t**2))))/dx)),
+        lambda x : 0,
+        lambda t : 0,
+        lambda t : 0,
+        None))
 
     Ns = [10, 20, 40, 80, 160, 320]
 
@@ -48,8 +48,12 @@ def main():
     for exercicio_atual in exercicios:
         print('\n---------------------------------------------------------------------------------------')
         print('Exercicio:'+exercicio_atual.nome)
+        
+        erro_anterior_euler = -1
+        erro_anterior_crank = -1
         for N_atual in Ns:
-            print('\nN:'+str(N_atual))
+            print('----------')
+            print('N:'+str(N_atual))
             x = np.linspace(0, 1, N_atual+1)
 
             PlotDatas_euler, y_estimado_euler = ex2.resolver_euler(exercicio_atual.u0, exercicio_atual.f, exercicio_atual.g1, exercicio_atual.g2, N_atual)
@@ -66,10 +70,20 @@ def main():
             plot(y_exato, y_estimado_crank, PlotDatas_crank, N_atual, 'Crank_'+exercicio_atual.nome+'_'+str(N_atual))
 
             if not exercicio_atual.f_exato is None:
-                print('Euler:')
-                calc_erro(y_exato,y_estimado_euler, N_atual)
-                print('Crank:')
-                calc_erro(y_exato,y_estimado_crank, N_atual)
+                print('\nEuler:')
+                erro_atual_euler = calc_erro(y_exato,y_estimado_euler, N_atual)
+                print('Erro Máximo:'+str(erro_atual_euler))
+                if(erro_anterior_euler>0):
+                    print('Fator de Redução:'+str((erro_anterior_euler - erro_atual_euler)/erro_anterior_euler))
+
+                print('\nCrank:')
+                erro_atual_crank = calc_erro(y_exato,y_estimado_crank, N_atual)
+                print('Erro Máximo:'+str(erro_atual_crank))
+                if(erro_anterior_crank>0):
+                    print('Fator de Redução:'+str((erro_anterior_crank - erro_atual_crank)/erro_anterior_crank))
+
+                erro_anterior_euler = erro_atual_euler
+                erro_anterior_crank = erro_atual_crank
 
 
 def plot(y_exato, y_estimado, PlotDatas, N, nome):
@@ -117,7 +131,7 @@ def calc_erro(y_exato,y_estimado, N):
             erro = e
             erro_percentual = 100*abs((y_exato[i]-y_estimado[i])/y_exato[i])
 
-    print("Erro Máximo: ", erro)
+    return erro
 
 if __name__ == "__main__":
     main()

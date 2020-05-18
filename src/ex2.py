@@ -12,9 +12,9 @@ class Ex2:
         
         a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_euler(N_in, lambda_calc))
 
-        ut = []
+        u = []
         for xi in range(1,N_in):
-            ut.append(u0_in(xi*delta_x))
+            u.append(u0_in(xi*delta_x))
 
         contador_adicionar_novo_plot = 0
         PlotDatas = []
@@ -23,33 +23,33 @@ class Ex2:
             t=delta_t*i
 
             if contador_adicionar_novo_plot<=t:
-                ut_aux = []
-                ut_aux.append(g1_in(t))
+                u_aux = []
+                u_aux.append(g1_in(t))
                 for x in range(0,N_in-1):
-                    ut_aux.append(ut[x])
-                ut_aux.append(g2_in(t))
+                    u_aux.append(u[x])
+                u_aux.append(g2_in(t))
 
-                PlotDatas.append(PlotData(contador_adicionar_novo_plot, ut_aux.copy()))
+                PlotDatas.append(PlotData(contador_adicionar_novo_plot, u_aux.copy()))
                 contador_adicionar_novo_plot = contador_adicionar_novo_plot + 0.1
 
-            ut[0] = ut[0]+lambda_calc*g1_in(t+delta_t)
-            ut[N_in-2] = ut[N_in-2]+lambda_calc*g2_in(t+delta_t)
+            u[0] = u[0]+lambda_calc*g1_in(t+delta_t)
+            u[N_in-2] = u[N_in-2]+lambda_calc*g2_in(t+delta_t)
 
             for x in range(0,N_in-1):
-                ut[x] = ut[x] + delta_t*f_in(t+delta_t,(x+1)*delta_x,delta_x)
+                u[x] = u[x] + delta_t*f_in(t+delta_t,(x+1)*delta_x,delta_x)
 
             
-            temp = self.substituicao_direta(a_sub_diagonal, ut)
+            temp = self.substituicao_direta(a_sub_diagonal, u)
             temp = self.resolver_diagonal(a_diagonal, temp.copy())
-            ut = self.substituicao_inversa(a_sub_diagonal, temp).copy()
+            u = self.substituicao_inversa(a_sub_diagonal, temp).copy()
 
-        ut_final = []
-        ut_final.append(g1_in(1))
+        u_final = []
+        u_final.append(g1_in(1))
         for x in range(0,N_in-1):
-            ut_final.append(ut[x])
-        ut_final.append(g2_in(1))
+            u_final.append(u[x])
+        u_final.append(g2_in(1))
 
-        return PlotDatas, ut_final
+        return PlotDatas, u_final
 
     def resolver_crank_nicolson(self, u0_in, f_in, g1_in, g2_in, N_in):
         
@@ -58,9 +58,9 @@ class Ex2:
         
         a_diagonal, a_sub_diagonal = self.calc_decomp(self.gerar_matriz_crank_nicolson(N_in, lambda_calc))
 
-        ut = []
+        u = []
         for xi in range(1,N_in):
-            ut.append(u0_in(xi*delta_x))
+            u.append(u0_in(xi*delta_x))
 
         contador_adicionar_novo_plot = 0
         PlotDatas = []
@@ -70,35 +70,35 @@ class Ex2:
             t=delta_t*i
 
             if contador_adicionar_novo_plot<=t:
-                ut_sub = []
-                ut_sub.append(g1_in(t))
+                u_sub = []
+                u_sub.append(g1_in(t))
                 for x in range(0,N_in-1):
-                    ut_sub.append(ut[x])
-                ut_sub.append(g2_in(t))
+                    u_sub.append(u[x])
+                u_sub.append(g2_in(t))
 
-                PlotDatas.append(PlotData(contador_adicionar_novo_plot, ut_sub.copy()))
+                PlotDatas.append(PlotData(contador_adicionar_novo_plot, u_sub.copy()))
                 contador_adicionar_novo_plot = contador_adicionar_novo_plot + 0.1
 
-            ut_aux = [None]*(N_in-1)
+            u_aux = [None]*(N_in-1)
 
-            ut_aux[0] = ut[0]+(lambda_calc/2)*(g1_in(t)-2*ut[0]+ut[1]) + (delta_t/2)*(f_in(t,delta_x, delta_x) + f_in(t+delta_t,delta_x,delta_x)) + (lambda_calc/2)*g1_in(t+delta_t)
-            ut_aux[N_in-2] = ut[N_in-2]+(lambda_calc/2)*(ut[N_in-3]-2*ut[N_in-2]+g2_in(t)) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x,delta_x) + f_in(t+delta_t,(N_in-1)*delta_x,delta_x)) + (lambda_calc/2)*(g2_in(t+delta_t))
+            u_aux[0] = u[0]+(lambda_calc/2)*(g1_in(t)-2*u[0]+u[1]) + (delta_t/2)*(f_in(t,delta_x, delta_x) + f_in(t+delta_t,delta_x,delta_x)) + (lambda_calc/2)*g1_in(t+delta_t)
+            u_aux[N_in-2] = u[N_in-2]+(lambda_calc/2)*(u[N_in-3]-2*u[N_in-2]+g2_in(t)) + (delta_t/2)*(f_in(t,(N_in-1)*delta_x,delta_x) + f_in(t+delta_t,(N_in-1)*delta_x,delta_x)) + (lambda_calc/2)*(g2_in(t+delta_t))
             for x in range(1,N_in-2):
-                ut_aux[x] = ut[x]+(lambda_calc/2)*(ut[x-1]-2*ut[x]+ut[x+1]) + (delta_t/2)*(f_in(t,(x+1)*delta_x,delta_x) + f_in(t+delta_t,(x+1)*delta_x,delta_x))
+                u_aux[x] = u[x]+(lambda_calc/2)*(u[x-1]-2*u[x]+u[x+1]) + (delta_t/2)*(f_in(t,(x+1)*delta_x,delta_x) + f_in(t+delta_t,(x+1)*delta_x,delta_x))
 
-            ut=ut_aux.copy()
+            u=u_aux.copy()
             
-            temp = self.substituicao_direta(a_sub_diagonal, ut)
+            temp = self.substituicao_direta(a_sub_diagonal, u)
             temp = self.resolver_diagonal(a_diagonal, temp)
-            ut = self.substituicao_inversa(a_sub_diagonal, temp)
+            u = self.substituicao_inversa(a_sub_diagonal, temp)
 
-        ut_final = []
-        ut_final.append(g1_in(1))
+        u_final = []
+        u_final.append(g1_in(1))
         for x in range(0,N_in-1):
-            ut_final.append(ut[x])
-        ut_final.append(g2_in(1))
+            u_final.append(u[x])
+        u_final.append(g2_in(1))
 
-        return PlotDatas,ut_final
+        return PlotDatas,u_final
 
 
     #https://themadcreator.github.io/luqr/
